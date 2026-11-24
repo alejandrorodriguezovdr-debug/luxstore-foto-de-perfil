@@ -311,7 +311,7 @@ const OK={
 const WHY={rule:'Rosa y vino nunca van juntos (regla de la marca).',same:'Es el mismo color del fondo.',low:'Poco contraste: el loto no se leería bien en pequeño.'};
 const SHADOW={negro:['#000000',.85],blanco:['#1B1B1B',.22],beige:['#5C4A30',.38],rosa:['#6E3A46',.38],vino:['#200204',.65]};
 const PRESETS=[['blanco','negro','Recomendada','tela'],['negro','beige','Negro y beige','liso'],['negro','blanco','Más contraste','liso'],['beige','negro','Clara','liso'],['blanco','vino','Blanca con vino','liso'],['vino','beige','Vino','liso'],['rosa','negro','Rosa','liso']];
-let st={bg:'blanco',fg:'negro',size:70,shadow:true,square:false,tex:'tela',ver:'loto',brand:'store',nc:'vino'};
+let st={bg:'blanco',fg:'negro',size:70,shadow:true,square:false,tex:'tela',ver:'loto',brand:'store',nc:'igual'};
 const VINO_OK={blanco:1,beige:1};
 function nameFill(o){return (o.nc==='vino'&&VINO_OK[o.bg]&&o.fg!=='vino')?COL.vino:COL[o.fg]}
 function lockup(ver,brand,fg,nf){return `<path fill="${fg}" d="${LOGO}"/><path fill="${nf}" d="${LK[ver][brand]}"/>`}

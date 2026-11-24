@@ -87,6 +87,24 @@ header.top{padding-block:28px 8px}
 .preset em::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--c2)}
 .preset:hover{border-color:var(--ink)}
 .dl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:14px;text-align:left}
+.seg button i{width:34px;height:34px;border-radius:8px;flex:0 0 34px;background-size:cover;background-position:center}
+.seg button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.gal figure{margin:0;display:grid;gap:8px}
+.gal img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:12px;display:block;background:var(--panel)}
+.gal figcaption{font-size:14px;color:var(--soft)}
+.gal figcaption b{color:var(--ink);font-weight:600}
+.swipe{display:none;font-size:13px;font-weight:500;color:var(--vino)}
+@media (max-width:860px){.gal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){
+  .gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin-inline:calc(-1 * max(20px,env(safe-area-inset-left,0px)));padding-inline:max(20px,env(safe-area-inset-left,0px));padding-bottom:6px;scrollbar-width:none}
+  .gal::-webkit-scrollbar{display:none}
+  .gal figure{flex:0 0 84%;scroll-snap-align:center}
+  .gal img{aspect-ratio:4/3}
+  .swipe{display:block}
+}
 .btn{border:0;border-radius:999px;padding:13px 16px;font-weight:600;font-size:15px;cursor:pointer;background:var(--ink);color:#fff}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--ink)}
 .note{font-size:13px;color:var(--soft)}
@@ -144,7 +162,7 @@ footer{padding-block:28px;font-size:13px;color:var(--soft)}
 <div class="wrap intro">
   <span class="eyebrow">Foto de perfil</span>
   <h1>Elige la foto de perfil de Lux Store</h1>
-  <p>Cambia el fondo, el color del loto y el tamaño, mira cómo se ve en Instagram y descarga la imagen lista para subir: 1080 × 1080 px, centrada para el círculo.</p>
+  <p>Cambia el fondo (liso o de tela), el color del loto y el tamaño, mira cómo se ve en Instagram y descarga la imagen lista para subir: 1080 × 1080 px, centrada para el círculo. Más abajo, la marca aplicada en la tienda.</p>
 </div>
 
 <div class="wrap studio">
@@ -172,10 +190,17 @@ footer{padding-block:28px;font-size:13px;color:var(--soft)}
       <p class="why" id="why"></p>
     </div>
     <div class="group">
+      <h2>Textura del fondo</h2>
+      <div class="seg" role="group" aria-label="Textura del fondo">
+        <button type="button" id="txL" aria-pressed="true"><i id="txLi"></i>Liso</button>
+        <button type="button" id="txT" aria-pressed="false"><i id="txTi"></i>Tela de satén</button>
+      </div>
+    </div>
+    <div class="group">
       <h2>Tamaño del loto</h2>
       <div class="range"><input type="range" id="size" min="58" max="84" step="1" value="70" aria-label="Tamaño del loto en porcentaje del ancho"><output id="sizeOut" for="size">70 %</output></div>
     </div>
-    <label class="toggle" for="shadow"><span><b>Sombra suave</b><small>Hace que el loto parezca flotar. El color sale del fondo.</small></span><input type="checkbox" id="shadow"></label>
+    <label class="toggle" for="shadow"><span><b>Efecto flotante</b><small>Brillo difuminado sobre fondo oscuro y sombra difuminada sobre fondo claro, para que el loto parezca flotar.</small></span><input type="checkbox" id="shadow" checked></label>
     <div class="dl">
       <button type="button" class="btn" id="dlPng">Descargar PNG</button>
       <button type="button" class="btn ghost" id="dlSvg">Descargar SVG</button>
@@ -204,6 +229,14 @@ footer{padding-block:28px;font-size:13px;color:var(--soft)}
       <div class="row"><div class="c" data-av></div><div><b>Lux Store</b><span>Así aparece en una lista de chats o mensajes</span></div></div>
       <div class="row"><div class="c" style="display:grid;place-items:center;font-weight:600;color:#8a7f76">A</div><div><b>Otro contacto</b><span>Para comparar junto a otras fotos</span></div></div>
     </div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap sec">
+  <div class="sec-head"><span class="eyebrow">Aplicaciones</span><h2>El loto en la tienda</h2><p>Así se vería la marca, discreta y pequeña, en empaques, papelería y objetos. Imágenes de muestra hechas con IA (Gemini): son referencias, no fotos de productos reales.</p></div>
+  <div style="display:grid;gap:12px;min-width:0">
+    <div class="gal" id="gal"></div>
+    <p class="swipe">Desliza para ver más →</p>
   </div>
 </div></section>
 
@@ -240,15 +273,29 @@ const OK={
 const WHY={rule:'Rosa y vino nunca van juntos (regla de la marca).',same:'Es el mismo color del fondo.',low:'Poco contraste: el loto no se leería bien en pequeño.'};
 const SHADOW={negro:['#000000',.85],blanco:['#1B1B1B',.22],beige:['#5C4A30',.38],rosa:['#6E3A46',.38],vino:['#200204',.65]};
 const PRESETS=[['negro','beige','Recomendada'],['negro','blanco','Más contraste'],['beige','negro','Clara'],['blanco','vino','Blanca con vino'],['vino','beige','Vino'],['rosa','negro','Rosa']];
-let st={bg:'negro',fg:'beige',size:70,shadow:false,square:false};
-try{const s=JSON.parse(localStorage.getItem('luxstore-perfil')||'null'); if(s&&OK[s.bg]&&OK[s.bg][s.fg]) st=Object.assign(st,s);}catch(e){}
+let st={bg:'negro',fg:'beige',size:70,shadow:true,square:false,tex:'liso'};
+try{const s=JSON.parse(localStorage.getItem('luxstore-perfil-v2')||'null'); if(s&&OK[s.bg]&&OK[s.bg][s.fg]) st=Object.assign(st,s);}catch(e){}
 
-function svgStr(o,px){
+const DARK={negro:1,vino:1};
+function tex(bg){return 'telas/tela_'+bg+'.jpg'}
+function svgStr(o,px,opt){
+  opt=opt||{};
   const k=(o.size/100)*VB.s/658.62, w=VB.s;
   const tx=VB.x+w/2-CX*k, ty=VB.y+w/2-CY*k;
-  const [sc,so]=SHADOW[o.bg];
-  const f=o.shadow?`<defs><filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="${(14*o.size/70).toFixed(1)}" stdDeviation="${(18*o.size/70).toFixed(1)}" flood-color="${sc}" flood-opacity="${so}"/></filter></defs>`:'';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VB.x} ${VB.y} ${w} ${w}"${px?` width="${px}" height="${px}"`:''}>${f}<rect x="${VB.x}" y="${VB.y}" width="${w}" height="${w}" fill="${COL[o.bg]}"/><g${o.shadow?' filter="url(#sh)"':''}><path fill="${COL[o.fg]}" transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k.toFixed(4)})" d="${LOGO}"/></g></svg>`;
+  const sz=o.size/70;
+  let f='';
+  if(o.shadow){
+    f=DARK[o.bg]
+      ? `<defs><filter id="fx" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="${(16*sz).toFixed(1)}" flood-color="${COL[o.fg]}" flood-opacity=".55"/></filter></defs>`
+      : `<defs><filter id="fx" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="${(14*sz).toFixed(1)}" stdDeviation="${(18*sz).toFixed(1)}" flood-color="${SHADOW[o.bg][0]}" flood-opacity="${SHADOW[o.bg][1]}"/></filter></defs>`;
+  }
+  let bg='';
+  if(!opt.noBg){
+    bg = o.tex==='tela'
+      ? `<image href="${opt.texHref||tex(o.bg)}" x="${VB.x}" y="${VB.y}" width="${w}" height="${w}" preserveAspectRatio="xMidYMid slice"/>`
+      : `<rect x="${VB.x}" y="${VB.y}" width="${w}" height="${w}" fill="${COL[o.bg]}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VB.x} ${VB.y} ${w} ${w}"${px?` width="${px}" height="${px}"`:''}>${f}${bg}<g${o.shadow?' filter="url(#fx)"':''}><path fill="${COL[o.fg]}" transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k.toFixed(4)})" d="${LOGO}"/></g></svg>`;
 }
 function lum(h){const c=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]}
 function ratio(a,b){const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
@@ -272,12 +319,14 @@ function render(){
   const r=ratio(COL[st.bg],COL[st.fg]);
   document.getElementById('contrast').textContent=`contraste ${r.toFixed(1)}:1`;
   const pre=PRESETS.find(p=>p[0]===st.bg&&p[1]===st.fg);
-  document.getElementById('combo').innerHTML=`<b>${NAME[st.bg]} con ${NAME[st.fg].toLowerCase()}</b>${pre?' · '+pre[2]:''}`;
+  document.getElementById('combo').innerHTML=`<b>${NAME[st.bg]}${st.tex==='tela'?' (satén)':''} con ${NAME[st.fg].toLowerCase()}</b>${pre?' · '+pre[2]:''}`;
   document.getElementById('size').value=st.size; document.getElementById('sizeOut').textContent=st.size+' %';
   document.getElementById('shadow').checked=st.shadow;
+  document.getElementById('txL').setAttribute('aria-pressed',String(st.tex!=='tela'));document.getElementById('txT').setAttribute('aria-pressed',String(st.tex==='tela'));
+  document.getElementById('txLi').style.background=COL[st.bg];document.getElementById('txTi').style.backgroundImage=`url(${tex(st.bg)})`;
   document.getElementById('big').classList.toggle('square',st.square);
   document.getElementById('shC').setAttribute('aria-pressed',String(!st.square));document.getElementById('shS').setAttribute('aria-pressed',String(st.square));
-  try{localStorage.setItem('luxstore-perfil',JSON.stringify(st))}catch(e){}
+  try{localStorage.setItem('luxstore-perfil-v2',JSON.stringify(st))}catch(e){}
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-bg]'); if(b){st.bg=b.dataset.bg; if(!OK[st.bg][st.fg]) st.fg=Object.keys(OK[st.bg])[0]; render(); return;}
@@ -287,19 +336,30 @@ document.addEventListener('click',e=>{
 document.getElementById('size').addEventListener('input',e=>{st.size=+e.target.value;render()});
 document.getElementById('shadow').addEventListener('change',e=>{st.shadow=e.target.checked;render()});
 document.getElementById('shC').addEventListener('click',()=>{st.square=false;render()});
+document.getElementById('txL').addEventListener('click',()=>{st.tex='liso';render()});
+document.getElementById('txT').addEventListener('click',()=>{st.tex='tela';render()});
 document.getElementById('shS').addEventListener('click',()=>{st.square=true;render()});
 
-function fileName(ext){return `luxstore-perfil_${st.bg}-${st.fg}${st.shadow?'-sombra':''}_1080.${ext}`}
+function fileName(ext){return `luxstore-perfil_${st.bg}${st.tex==='tela'?'-saten':''}-${st.fg}${st.shadow?'-flotante':''}_1080.${ext}`}
 function save(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);}
-document.getElementById('dlSvg').addEventListener('click',()=>save(new Blob([svgStr(st,1080)],{type:'image/svg+xml'}),fileName('svg')));
-document.getElementById('dlPng').addEventListener('click',()=>{
-  const note=document.getElementById('dlNote');
-  const img=new Image(); const u=URL.createObjectURL(new Blob([svgStr(st,1080)],{type:'image/svg+xml'}));
-  img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=1080;c.getContext('2d').drawImage(img,0,0,1080,1080);URL.revokeObjectURL(u);
-    c.toBlob(b=>{if(!b){note.textContent='No se pudo generar el PNG en este navegador. Prueba con Chrome o descarga el SVG.';return;}save(b,fileName('png'));note.textContent='Listo: '+fileName('png');},'image/png');};
-  img.onerror=()=>{note.textContent='No se pudo generar el PNG en este navegador. Prueba con Chrome o descarga el SVG.'};
-  img.src=u;
+function loadImg(src){return new Promise((ok,ko)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=ko;i.src=src;})}
+function toDataURL(url){return fetch(url).then(r=>r.blob()).then(b=>new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(fr.result);fr.readAsDataURL(b);}))}
+const fail=()=>{document.getElementById('dlNote').textContent='No se pudo generar el archivo en este navegador. Prueba con Chrome desde el enlace publicado.'};
+document.getElementById('dlSvg').addEventListener('click',async()=>{
+  try{const opt=st.tex==='tela'?{texHref:await toDataURL(tex(st.bg))}:{};save(new Blob([svgStr(st,1080,opt)],{type:'image/svg+xml'}),fileName('svg'));}catch(e){fail()}
 });
+document.getElementById('dlPng').addEventListener('click',async()=>{
+  const note=document.getElementById('dlNote');
+  try{
+    const c=document.createElement('canvas');c.width=c.height=1080;const x=c.getContext('2d');
+    if(st.tex==='tela'){x.drawImage(await loadImg(tex(st.bg)),0,0,1080,1080);} else {x.fillStyle=COL[st.bg];x.fillRect(0,0,1080,1080);}
+    const u=URL.createObjectURL(new Blob([svgStr(st,1080,{noBg:true})],{type:'image/svg+xml'}));
+    x.drawImage(await loadImg(u),0,0,1080,1080);URL.revokeObjectURL(u);
+    c.toBlob(b=>{if(!b)return fail();save(b,fileName('png'));note.textContent='Listo: '+fileName('png');},'image/png');
+  }catch(e){fail()}
+});
+const APPS=[['papeleria','Papelería','tarjeta, tarjeta de regalo y sticker'],['etiqueta','Etiqueta colgante','con borla vino en la bolsa'],['caja-rosa-y-bolsa','Caja y bolsa','caja rosa y bolsa beige'],['papel-de-seda','Papel de seda','con sello vino'],['vela-y-taza','Vela y taza','objetos de la tienda'],['toallas','Toallas','bordado tono sobre tono'],['papel-con-relieve','Papel con relieve','y sello negro'],['caja-negra','Caja de regalo','foil beige y listón vino'],['letrero','Letrero','en la pared del local']];
+document.getElementById('gal').innerHTML=APPS.map(([f,t,d])=>`<figure><img src="aplicaciones/${f}.jpg" alt="${t}: ${d}" loading="lazy" width="1400" height="781"><figcaption><b>${t}</b> · ${d}</figcaption></figure>`).join('');
 render();
 const fl=document.getElementById('float');
 fl.addEventListener('click',()=>document.getElementById('big').scrollIntoView({behavior:'smooth',block:'center'}));

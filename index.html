@@ -207,13 +207,6 @@ footer{padding-block:28px;font-size:13px;color:var(--soft)}
       <p class="hint" id="brandHint"></p>
     </div>
     <div class="group">
-      <h2>Color del nombre</h2>
-      <div class="seg2" role="group" aria-label="Color del nombre">
-        <button type="button" data-nc="igual">Igual al loto</button>
-        <button type="button" data-nc="vino" id="ncVino">Vino</button>
-      </div>
-    </div>
-    <div class="group">
       <h2>Combinaciones sugeridas</h2>
       <div class="presets" id="presets"></div>
     </div>
@@ -311,9 +304,9 @@ const OK={
 const WHY={rule:'Rosa y vino nunca van juntos (regla de la marca).',same:'Es el mismo color del fondo.',low:'Poco contraste: el loto no se leería bien en pequeño.'};
 const SHADOW={negro:['#000000',.85],blanco:['#1B1B1B',.22],beige:['#5C4A30',.38],rosa:['#6E3A46',.38],vino:['#200204',.65]};
 const PRESETS=[['blanco','negro','Recomendada','tela'],['negro','beige','Negro y beige','liso'],['negro','blanco','Más contraste','liso'],['beige','negro','Clara','liso'],['blanco','vino','Blanca con vino','liso'],['vino','beige','Vino','liso'],['rosa','negro','Rosa','liso']];
-let st={bg:'blanco',fg:'negro',size:70,shadow:true,square:false,tex:'tela',ver:'loto',brand:'store',nc:'igual'};
+let st={bg:'blanco',fg:'negro',size:70,shadow:true,square:false,tex:'tela',ver:'loto',brand:'store'};
 const VINO_OK={blanco:1,beige:1};
-function nameFill(o){return (o.nc==='vino'&&VINO_OK[o.bg]&&o.fg!=='vino')?COL.vino:COL[o.fg]}
+function nameFill(o){return COL[o.fg]}
 function lockup(ver,brand,fg,nf){return `<path fill="${fg}" d="${LOGO}"/><path fill="${nf}" d="${LK[ver][brand]}"/>`}
 
 const DARK={negro:1,vino:1};
@@ -373,8 +366,6 @@ function render(){
   const [hx,hy,hw,hh]=LK.h.vb; document.getElementById('hdLogo').innerHTML=`<svg viewBox="${hx} ${hy} ${hw} ${hh}" role="img" aria-label="${st.brand==='nails'?'Lux Nails':'Lux Store'}">${lockup('h',st.brand,COL[st.fg],nameFill(st))}</svg>`;
   document.querySelectorAll('[data-ver]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ver===st.ver)));
   document.querySelectorAll('[data-brand]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.brand===st.brand)));
-  const vOk=!!VINO_OK[st.bg]&&st.fg!=='vino';
-  document.querySelectorAll('[data-nc]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.nc===(vOk?st.nc:'igual')))); const nv=document.getElementById('ncVino'); nv.disabled=!vOk; nv.title=vOk?'':'El nombre en vino solo va sobre blanco o beige';
   document.getElementById('brandHint').textContent=st.brand==='nails'?'Lux Nails: para diseños y publicaciones. La foto de perfil de luxnails09 no se cambia.':'';
   document.querySelectorAll('.bname').forEach(e=>e.textContent=st.brand==='nails'?'Lux Nails':'Lux Store');
   const chipBg=st.tex==='tela'?`background:${COL[st.bg]} url(${tex(st.bg)}) center/cover`:`background:${COL[st.bg]}`;
@@ -397,7 +388,6 @@ document.getElementById('txL').addEventListener('click',()=>{st.tex='liso';rende
 document.getElementById('fxBtn').addEventListener('click',()=>{st.shadow=!st.shadow;render()});
 document.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>{st.ver=b.dataset.ver;render()}));
 document.querySelectorAll('[data-brand]').forEach(b=>b.addEventListener('click',()=>{st.brand=b.dataset.brand;render()}));
-document.querySelectorAll('[data-nc]').forEach(b=>b.addEventListener('click',()=>{if(!b.disabled){st.nc=b.dataset.nc;render()}}));
 document.getElementById('txT').addEventListener('click',()=>{st.tex='tela';render()});
 document.getElementById('shS').addEventListener('click',()=>{st.square=true;render()});
 

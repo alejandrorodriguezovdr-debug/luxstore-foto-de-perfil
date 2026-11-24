@@ -245,7 +245,7 @@ footer{padding-block:28px;font-size:13px;color:var(--soft)}
   <div style="display:grid;gap:16px;min-width:0">
     <p class="aviso"><b>Cuenta: la de Lux Store.</b> No cambies la foto de <code>luxnails09</code>: es la marca personal de Luxana y se queda como está.</p>
     <ol class="steps">
-      <li><span>Elige la combinación que indique Alek. Si no dice nada, usa la recomendada: <b>negro con beige</b>.</span></li>
+      <li><span>Elige la combinación que indique Alek. Si no dice nada, usa la recomendada: <b>blanco satén con loto negro</b> y el efecto flotante activado.</span></li>
       <li><span>Toca <b>Descargar PNG</b>. En el celular, si se abre la imagen, mantenla presionada y guárdala.</span></li>
       <li><span>En Instagram, con la cuenta de Lux Store: <b>Perfil → Editar perfil → Cambiar foto de perfil → Subir foto</b>.</span></li>
       <li><span>Súbela <b>sin recortar ni hacer zoom</b>: el loto ya entra completo en el círculo.</span></li>
@@ -272,9 +272,8 @@ const OK={
 };
 const WHY={rule:'Rosa y vino nunca van juntos (regla de la marca).',same:'Es el mismo color del fondo.',low:'Poco contraste: el loto no se leería bien en pequeño.'};
 const SHADOW={negro:['#000000',.85],blanco:['#1B1B1B',.22],beige:['#5C4A30',.38],rosa:['#6E3A46',.38],vino:['#200204',.65]};
-const PRESETS=[['negro','beige','Recomendada'],['negro','blanco','Más contraste'],['beige','negro','Clara'],['blanco','vino','Blanca con vino'],['vino','beige','Vino'],['rosa','negro','Rosa']];
-let st={bg:'negro',fg:'beige',size:70,shadow:true,square:false,tex:'liso'};
-try{const s=JSON.parse(localStorage.getItem('luxstore-perfil-v2')||'null'); if(s&&OK[s.bg]&&OK[s.bg][s.fg]) st=Object.assign(st,s);}catch(e){}
+const PRESETS=[['blanco','negro','Recomendada','tela'],['negro','beige','Negro y beige','liso'],['negro','blanco','Más contraste','liso'],['beige','negro','Clara','liso'],['blanco','vino','Blanca con vino','liso'],['vino','beige','Vino','liso'],['rosa','negro','Rosa','liso']];
+let st={bg:'blanco',fg:'negro',size:70,shadow:true,square:false,tex:'tela'};
 
 const DARK={negro:1,vino:1};
 function tex(bg){return 'telas/tela_'+bg+'.jpg'}
@@ -305,7 +304,7 @@ function chips(el,kind){
   el.innerHTML=Object.keys(COL).map(c=>`<button type="button" class="chip" data-${kind}="${c}"><i style="background:${COL[c]}"></i><span>${NAME[c]}</span></button>`).join('');
 }
 chips(document.getElementById('swBg'),'bg'); chips(document.getElementById('swFg'),'fg');
-document.getElementById('presets').innerHTML=PRESETS.map(([b,f,t])=>`<button type="button" class="preset" data-p="${b},${f}"><em style="background:${COL[b]};--c2:${COL[f]}"></em>${t}</button>`).join('');
+document.getElementById('presets').innerHTML=PRESETS.map(([b,f,t,x])=>`<button type="button" class="preset" data-p="${b},${f},${x}"><em style="background:${x==='tela'?`url(${tex(b)}) center/cover`:COL[b]};--c2:${COL[f]}"></em>${t}</button>`).join('');
 const sizes=[[110,'Perfil'],[77,'Historias'],[56,'Comentarios'],[44,'Mensajes'],[32,'Notificaciones']];
 document.getElementById('sizes').innerHTML=sizes.map(([p,t])=>`<figure><div class="c" data-av style="width:${p}px;height:${p}px"></div><figcaption>${p} px · ${t}</figcaption></figure>`).join('');
 
@@ -318,7 +317,7 @@ function render(){
   document.getElementById('why').textContent=Object.keys(COL).filter(c=>!OK[st.bg][c]).map(c=>`${NAME[c]}: ${reason(st.bg,c).replace(/\.$/,'').toLowerCase()}`).join(' · ');
   const r=ratio(COL[st.bg],COL[st.fg]);
   document.getElementById('contrast').textContent=`contraste ${r.toFixed(1)}:1`;
-  const pre=PRESETS.find(p=>p[0]===st.bg&&p[1]===st.fg);
+  const pre=PRESETS.find(p=>p[0]===st.bg&&p[1]===st.fg&&p[3]===st.tex);
   document.getElementById('combo').innerHTML=`<b>${NAME[st.bg]}${st.tex==='tela'?' (satén)':''} con ${NAME[st.fg].toLowerCase()}</b>${pre?' · '+pre[2]:''}`;
   document.getElementById('size').value=st.size; document.getElementById('sizeOut').textContent=st.size+' %';
   document.getElementById('shadow').checked=st.shadow;
@@ -326,12 +325,11 @@ function render(){
   document.getElementById('txLi').style.background=COL[st.bg];document.getElementById('txTi').style.backgroundImage=`url(${tex(st.bg)})`;
   document.getElementById('big').classList.toggle('square',st.square);
   document.getElementById('shC').setAttribute('aria-pressed',String(!st.square));document.getElementById('shS').setAttribute('aria-pressed',String(st.square));
-  try{localStorage.setItem('luxstore-perfil-v2',JSON.stringify(st))}catch(e){}
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-bg]'); if(b){st.bg=b.dataset.bg; if(!OK[st.bg][st.fg]) st.fg=Object.keys(OK[st.bg])[0]; render(); return;}
   const f=e.target.closest('[data-fg]'); if(f&&!f.disabled){st.fg=f.dataset.fg; render(); return;}
-  const p=e.target.closest('[data-p]'); if(p){[st.bg,st.fg]=p.dataset.p.split(','); render();}
+  const p=e.target.closest('[data-p]'); if(p){[st.bg,st.fg,st.tex]=p.dataset.p.split(','); render();}
 });
 document.getElementById('size').addEventListener('input',e=>{st.size=+e.target.value;render()});
 document.getElementById('shadow').addEventListener('change',e=>{st.shadow=e.target.checked;render()});

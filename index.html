@@ -43,7 +43,8 @@ header.top{padding-block:22px;background:var(--hbg,#fff);background-size:cover;b
 .stagebtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .seg3 button,.seg2 button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 8px;cursor:pointer;display:grid;justify-items:center;gap:6px;font-size:13px}
-.seg3 button svg{height:34px;width:auto;max-width:100%}
+.seg3 button .mini{display:grid;place-items:center;width:100%;height:58px;border-radius:8px;border:1px solid rgba(27,27,27,.08)}
+.seg3 button .mini svg{height:38px;width:auto;max-width:88%}
 .seg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .seg3 button[aria-pressed="true"],.seg2 button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:600}
 .seg2 button:disabled{opacity:.4;cursor:not-allowed}
@@ -376,7 +377,8 @@ function render(){
   document.querySelectorAll('[data-nc]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.nc===(vOk?st.nc:'igual')))); const nv=document.getElementById('ncVino'); nv.disabled=!vOk; nv.title=vOk?'':'El nombre en vino solo va sobre blanco o beige';
   document.getElementById('brandHint').textContent=st.brand==='nails'?'Lux Nails: para diseños y publicaciones. La foto de perfil de luxnails09 no se cambia.':'';
   document.querySelectorAll('.bname').forEach(e=>e.textContent=st.brand==='nails'?'Lux Nails':'Lux Store');
-  const mini=(ver)=>{if(ver==='loto')return `<svg viewBox="278.74 383 658.62 416.84" aria-hidden="true"><path fill="#1B1B1B" d="${LOGO}"/></svg>`;const [a,b,c,d]=LK[ver].vb;return `<svg viewBox="${a} ${b} ${c} ${d}" aria-hidden="true">${lockup(ver,st.brand,'#1B1B1B','#7A0D14')}</svg>`;};
+  const chipBg=st.tex==='tela'?`background:${COL[st.bg]} url(${tex(st.bg)}) center/cover`:`background:${COL[st.bg]}`;
+  const mini=(ver)=>{let svg;if(ver==='loto'){svg=`<svg viewBox="278.74 383 658.62 416.84" aria-hidden="true"><path fill="${COL[st.fg]}" d="${LOGO}"/></svg>`;}else{const [a,b,c,d]=LK[ver].vb;svg=`<svg viewBox="${a} ${b} ${c} ${d}" aria-hidden="true">${lockup(ver,st.brand,COL[st.fg],nameFill(st))}</svg>`;}return `<span class="mini" style="${chipBg}">${svg}</span>`;};
   document.getElementById('vLoto').innerHTML=mini('loto')+'Solo loto'; document.getElementById('vH').innerHTML=mini('h')+'Nombre al lado'; document.getElementById('vV').innerHTML=mini('v')+'Nombre abajo';
   document.getElementById('txL').setAttribute('aria-pressed',String(st.tex!=='tela'));document.getElementById('txT').setAttribute('aria-pressed',String(st.tex==='tela'));
   document.getElementById('txLi').style.background=COL[st.bg];document.getElementById('txTi').style.backgroundImage=`url(${tex(st.bg)})`;

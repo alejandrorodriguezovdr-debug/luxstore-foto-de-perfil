@@ -372,8 +372,8 @@ function render(){
   const [hx,hy,hw,hh]=LK.h.vb; document.getElementById('hdLogo').innerHTML=`<svg viewBox="${hx} ${hy} ${hw} ${hh}" role="img" aria-label="${st.brand==='nails'?'Lux Nails':'Lux Store'}">${lockup('h',st.brand,COL[st.fg],nameFill(st))}</svg>`;
   document.querySelectorAll('[data-ver]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ver===st.ver)));
   document.querySelectorAll('[data-brand]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.brand===st.brand)));
-  document.querySelectorAll('[data-nc]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.nc===st.nc)));
-  const vOk=!!VINO_OK[st.bg]&&st.fg!=='vino'; const nv=document.getElementById('ncVino'); nv.disabled=!vOk; nv.title=vOk?'':'El nombre en vino solo va sobre blanco o beige';
+  const vOk=!!VINO_OK[st.bg]&&st.fg!=='vino';
+  document.querySelectorAll('[data-nc]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.nc===(vOk?st.nc:'igual')))); const nv=document.getElementById('ncVino'); nv.disabled=!vOk; nv.title=vOk?'':'El nombre en vino solo va sobre blanco o beige';
   document.getElementById('brandHint').textContent=st.brand==='nails'?'Lux Nails: para diseños y publicaciones. La foto de perfil de luxnails09 no se cambia.':'';
   document.querySelectorAll('.bname').forEach(e=>e.textContent=st.brand==='nails'?'Lux Nails':'Lux Store');
   const mini=(ver)=>{if(ver==='loto')return `<svg viewBox="278.74 383 658.62 416.84" aria-hidden="true"><path fill="#1B1B1B" d="${LOGO}"/></svg>`;const [a,b,c,d]=LK[ver].vb;return `<svg viewBox="${a} ${b} ${c} ${d}" aria-hidden="true">${lockup(ver,st.brand,'#1B1B1B','#7A0D14')}</svg>`;};
